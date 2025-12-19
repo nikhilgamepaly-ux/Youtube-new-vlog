@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Location Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.card{
+  background:#0d0d0d;
+  padding:25px;
+  border-radius:15px;
+  width:320px;
+  text-align:center;
+  box-shadow:0 0 25px rgba(0,0,0,.6);
+}
+.timer{
+  font-size:28px;
+  margin:15px 0;
+  color:#00ffcc;
+}
+a{
+  color:#25d366;
+  display:block;
+  margin-top:10px;
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+  <h2>Location Check</h2>
+  <p>Verification starts in</p>
+  <div class="timer" id="timer">5</div>
+  <div id="out"></div>
+</div>
+
+<script>
+let time = 5;
+let timer = setInterval(()=>{
+  time--;
+  document.getElementById("timer").innerText = time;
+  if(time === 0){
+    clearInterval(timer);
+    getLocation();
+  }
+},1000);
+
+function getLocation(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(show, deny);
+  }else{
+    document.getElementById("out").innerHTML="Not supported";
+  }
+}
+
+function show(pos){
+  let lat = pos.coords.latitude;
+  let lon = pos.coords.longitude;
+  let map = `https://www.google.com/maps?q=${lat},${lon}`;
+  let msg = `My Location:%0A${map}`;
+
+  document.getElementById("out").innerHTML = `
+    <p>✅ Location Captured</p>
+    <a href="${map}" target="_blank">📍 Open Google Maps</a>
+    <a href="https://wa.me/?text=${msg}" target="_blank">📤 Send on WhatsApp</a>
+  `;
+}
+
+function deny(){
+  document.getElementById("out").innerHTML =
+  "<p>❌ Location permission denied</p>";
+}
+</script>
+</body>
+</html>
